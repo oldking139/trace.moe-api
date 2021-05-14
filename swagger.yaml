@@ -1,133 +1,257 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
   title: api.trace.moe
   description: api.trace.moe
+  version: 1.0.0
 servers:
-  - description: Production Server
-    url: https://api.trace.moe/
-
+- url: https://api.trace.moe/
+  description: Production Server
+security:
+- ApiKeyInHeader: []
+- ApiKeyInQuery: []
+paths:
+  /search:
+    get:
+      summary: Get search result of an anime screeshot
+      parameters:
+      - name: anilistInfo
+        in: query
+        description: Include Anilist info
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          pattern: ^$
+          type: string
+      - name: cutBorders
+        in: query
+        description: Cut black borders
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          pattern: ^$
+          type: string
+      - name: url
+        in: query
+        description: Image URL
+        required: true
+        allowEmptyValue: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: anilistID
+        in: query
+        description: Filter by Anilist ID
+        required: false
+        allowEmptyValue: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: A search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        "400":
+          description: "Image is malformed, or some params are incorrect"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "402":
+          description: Search quota or concurrency limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: No permission to access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The requested resourse is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "405":
+          description: Wrong HTTP method used
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: HTTP rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Database error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "503":
+          description: Database is overloaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: Database is not responding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Get search result of an anime screeshot
+      parameters:
+      - name: anilistInfo
+        in: query
+        description: Include Anilist info
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          pattern: ^$
+          type: string
+      - name: cutBorders
+        in: query
+        description: Cut black borders
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          pattern: ^$
+          type: string
+      - name: anilistID
+        in: query
+        description: Filter by Anilist ID
+        required: false
+        allowEmptyValue: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        "200":
+          description: A search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        "400":
+          description: "Image is malformed, or some params are incorrect"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "402":
+          description: Search quota or concurrency limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: No permission to access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The requested resourse is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "405":
+          description: Wrong HTTP method used
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: HTTP rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Database error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "503":
+          description: Database is overloaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "504":
+          description: Database is not responding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /me:
+    get:
+      summary: Get info about your account
+      responses:
+        "200":
+          description: A user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: "Image is malformed, or some params are incorrect"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: No permission to access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The requested resourse is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "405":
+          description: Wrong HTTP method used
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "429":
+          description: HTTP rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
-  securitySchemes:
-    ApiKeyInHeader:
-      type: apiKey
-      name: x-trace-key
-      description: API Key (if any)
-      in: header
-    ApiKeyInQuery:
-      type: apiKey
-      description: API Key (if any)
-      name: key
-      in: query
-  parameters:
-    url:
-      name: url
-      description: Image URL
-      in: query
-      required: true
-      allowEmptyValue: false
-      schema:
-        type: string
-    cutBorders:
-      name: cutBorders
-      description: Cut black borders
-      in: query
-      required: false
-      allowEmptyValue: true
-      schema:
-        type: string
-        pattern: ^$
-    anilistInfo:
-      name: anilistInfo
-      description: Include Anilist info
-      in: query
-      required: false
-      allowEmptyValue: true
-      schema:
-        type: string
-        pattern: ^$
-    anilistID:
-      name: anilistID
-      description: Filter by Anilist ID
-      in: query
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: integer
-  responses:
-    User:
-      description: A user response
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/User"
-    ErrorBadRequest:
-      description: Image is malformed, or some params are incorrect
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorPaymentRequired:
-      description: Search quota or concurrency limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorUnauthorized:
-      description: API key is invalid
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorForbidden:
-      description: No permission to access
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorNotFound:
-      description: The requested resourse is not found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorMethodNotAllowed:
-      description: Wrong HTTP method used
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorTooManyRequests:
-      description: HTTP rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorInternalServerError:
-      description: Database error
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorServiceUnavailable:
-      description: Database is overloaded
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    ErrorGatewayTimeout:
-      description: Database is not responding
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    Success:
-      description: A search response
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/SearchResult"
-
   schemas:
     Error:
       type: object
@@ -166,7 +290,7 @@ components:
           type: array
           description: Search results
           items:
-            $ref: "#/components/schemas/Result"
+            $ref: '#/components/schemas/Result'
     Result:
       type: object
       properties:
@@ -194,91 +318,136 @@ components:
         image:
           type: string
           description: URL to the preview image of the matching scene
-
-security:
-  - ApiKeyInHeader: []
-  - ApiKeyInQuery: []
-
-paths:
-  /search:
-    get:
-      summary: Get search result of an anime screeshot
-      parameters:
-        - $ref: "#/components/parameters/anilistInfo"
-        - $ref: "#/components/parameters/cutBorders"
-        - $ref: "#/components/parameters/url"
-        - $ref: "#/components/parameters/anilistID"
-      responses:
-        "200":
-          $ref: "#/components/responses/Success"
-        "400":
-          $ref: "#/components/responses/ErrorBadRequest"
-        "402":
-          $ref: "#/components/responses/ErrorPaymentRequired"
-        "403":
-          $ref: "#/components/responses/ErrorForbidden"
-        "404":
-          $ref: "#/components/responses/ErrorNotFound"
-        "405":
-          $ref: "#/components/responses/ErrorMethodNotAllowed"
-        "429":
-          $ref: "#/components/responses/ErrorTooManyRequests"
-        "500":
-          $ref: "#/components/responses/ErrorInternalServerError"
-        "503":
-          $ref: "#/components/responses/ErrorServiceUnavailable"
-        "504":
-          $ref: "#/components/responses/ErrorGatewayTimeout"
-    post:
-      summary: Get search result of an anime screeshot
-      parameters:
-        - $ref: "#/components/parameters/anilistInfo"
-        - $ref: "#/components/parameters/cutBorders"
-        - $ref: "#/components/parameters/anilistID"
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-      responses:
-        "200":
-          $ref: "#/components/responses/Success"
-        "400":
-          $ref: "#/components/responses/ErrorBadRequest"
-        "402":
-          $ref: "#/components/responses/ErrorPaymentRequired"
-        "403":
-          $ref: "#/components/responses/ErrorForbidden"
-        "404":
-          $ref: "#/components/responses/ErrorNotFound"
-        "405":
-          $ref: "#/components/responses/ErrorMethodNotAllowed"
-        "429":
-          $ref: "#/components/responses/ErrorTooManyRequests"
-        "500":
-          $ref: "#/components/responses/ErrorInternalServerError"
-        "503":
-          $ref: "#/components/responses/ErrorServiceUnavailable"
-        "504":
-          $ref: "#/components/responses/ErrorGatewayTimeout"
-
-  /me:
-    get:
-      summary: Get info about your account
-      responses:
-        "200":
-          $ref: "#/components/responses/User"
-        "400":
-          $ref: "#/components/responses/ErrorBadRequest"
-        "403":
-          $ref: "#/components/responses/ErrorForbidden"
-        "404":
-          $ref: "#/components/responses/ErrorNotFound"
-        "405":
-          $ref: "#/components/responses/ErrorMethodNotAllowed"
-        "429":
-          $ref: "#/components/responses/ErrorTooManyRequests"
+    body:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+  responses:
+    User:
+      description: A user response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    ErrorBadRequest:
+      description: "Image is malformed, or some params are incorrect"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorPaymentRequired:
+      description: Search quota or concurrency limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorUnauthorized:
+      description: API key is invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorForbidden:
+      description: No permission to access
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorNotFound:
+      description: The requested resourse is not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorMethodNotAllowed:
+      description: Wrong HTTP method used
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorTooManyRequests:
+      description: HTTP rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorInternalServerError:
+      description: Database error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorServiceUnavailable:
+      description: Database is overloaded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorGatewayTimeout:
+      description: Database is not responding
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Success:
+      description: A search response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SearchResult'
+  parameters:
+    url:
+      name: url
+      in: query
+      description: Image URL
+      required: true
+      allowEmptyValue: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    cutBorders:
+      name: cutBorders
+      in: query
+      description: Cut black borders
+      required: false
+      allowEmptyValue: true
+      style: form
+      explode: true
+      schema:
+        pattern: ^$
+        type: string
+    anilistInfo:
+      name: anilistInfo
+      in: query
+      description: Include Anilist info
+      required: false
+      allowEmptyValue: true
+      style: form
+      explode: true
+      schema:
+        pattern: ^$
+        type: string
+    anilistID:
+      name: anilistID
+      in: query
+      description: Filter by Anilist ID
+      required: false
+      allowEmptyValue: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+  securitySchemes:
+    ApiKeyInHeader:
+      type: apiKey
+      description: API Key (if any)
+      name: x-trace-key
+      in: header
+    ApiKeyInQuery:
+      type: apiKey
+      description: API Key (if any)
+      name: key
+      in: query
