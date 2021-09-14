@@ -375,7 +375,7 @@ export default async (req, res) => {
     return {
       anilist: anilist_id,
       filename,
-      episode: aniep(filename),
+      episode: filename,
       from,
       to,
       similarity: (100 - d) / 100,
